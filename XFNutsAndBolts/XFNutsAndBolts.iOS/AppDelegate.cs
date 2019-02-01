@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Text;
 using Foundation;
 using UIKit;
+using XFNutsAndBolts.iOS.ConfigAndSettings;
 
 namespace XFNutsAndBolts.iOS
 {
@@ -23,9 +24,28 @@ namespace XFNutsAndBolts.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
-            LoadApplication(new App());
+
+            // Can use injection if want it, but this loads only once
+            // no need to add resources just for loading one settings
+
+            var name1 = ConfigAndSetting.GalGagot;
+            var name2 = ConfigAndSetting.GalGadotInJapanese;
+            var data = CleanByteOrderMark(ConfigAndSetting.appsettings);
+            var json = Encoding.UTF8.GetString(data);
+
+            LoadApplication(new App(name1, name2, json));
 
             return base.FinishedLaunching(app, options);
+        }
+
+        public byte[] CleanByteOrderMark(byte[] bytes)
+        {
+            var bom = new byte[] { 0xEF, 0xBB, 0xBF };
+            var empty = Enumerable.Empty<byte>();
+            if (bytes.Take(3).SequenceEqual(bom))
+                return bytes.Skip(3).ToArray();
+
+            return bytes;
         }
     }
 }
