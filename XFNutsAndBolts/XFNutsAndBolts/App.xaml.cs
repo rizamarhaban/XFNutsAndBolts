@@ -1,7 +1,12 @@
-﻿using System;
+﻿using global::Autofac;
+using Newtonsoft.Json;
+using System;
 using System.Diagnostics;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using XFNutsAndBolts.Models;
+using XFNutsAndBolts.Settings;
+using XFNutsAndBolts.ViewModels;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace XFNutsAndBolts
@@ -17,6 +22,14 @@ namespace XFNutsAndBolts
             Debug.WriteLine(name2);
             Debug.WriteLine(json);
 
+            var settings = new AppSettingsTest
+            {
+                Name1 = name1,
+                Name2 = name2,
+                AppSettings = JsonConvert.DeserializeObject<AppSettings>(json)
+            };
+
+            Bootstrapper.Initialize(settings);
             MainPage = new MainPage();
         }
 

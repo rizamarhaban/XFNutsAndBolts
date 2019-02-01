@@ -2,13 +2,19 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:XFNutsAndBolts"
+             xmlns:vm="clr-namespace:XFNutsAndBolts.ViewModels"
              x:Class="XFNutsAndBolts.MainPage">
 
-    <StackLayout>
+    <ContentPage.BindingContext>
+        <vm:ViewModelLocator />
+    </ContentPage.BindingContext>
+    
+    <StackLayout VerticalOptions="CenterAndExpand">
         <!-- Place new controls here -->
-        <Label Text="Welcome to Xamarin.Forms!" 
-           HorizontalOptions="Center"
-           VerticalOptions="CenterAndExpand" />
+        <Label Text="Welcome to Xamarin.Forms!" HorizontalOptions="Center" />
+        <Label Text="{Binding Main.Name1}" HorizontalOptions="Center" />
+        <Label Text="{Binding Main.Name2}" HorizontalOptions="Center" />
+        <Label Text="{Binding Main.AppVersion}" HorizontalOptions="Center" />
     </StackLayout>
 
 </ContentPage>
