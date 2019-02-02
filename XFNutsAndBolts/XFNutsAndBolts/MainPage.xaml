@@ -12,6 +12,11 @@
         <Label Text="{Binding Name}" HorizontalOptions="Center" />
         <Label Text="{Binding NameInJapanese}" HorizontalOptions="Center" />
         <Label Text="{Binding AppVersion}" HorizontalOptions="Center" />
+
+        <StackLayout Margin="10">
+            <Label x:Name="lblScanning" HorizontalOptions="Center" HorizontalTextAlignment="Center" TextColor="Red"
+                   Text="You able to do anything on the UI while the Text above is loading. No lagging animation." />
+        </StackLayout>
     </StackLayout>
 
 </ContentPage>

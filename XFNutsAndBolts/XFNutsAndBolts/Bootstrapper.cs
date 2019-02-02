@@ -18,6 +18,7 @@ namespace XFNutsAndBolts
 
             AutofacServiceLocator asl = new AutofacServiceLocator(container);
             ServiceLocator.SetLocatorProvider(() => asl);
+
         }
     }
 }

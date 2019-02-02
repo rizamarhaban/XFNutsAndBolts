@@ -38,6 +38,8 @@ namespace XFNutsAndBolts.iOS
             return base.FinishedLaunching(app, options);
         }
 
+        // helper if using file resource. not needed if use string only.
+        // can make as extensions as well
         public byte[] CleanByteOrderMark(byte[] bytes)
         {
             var bom = new byte[] { 0xEF, 0xBB, 0xBF };

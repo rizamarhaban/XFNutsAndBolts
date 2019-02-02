@@ -35,8 +35,8 @@ namespace XFNutsAndBolts.Droid
             LoadApplication(new App(name1, name2, json));
         }
 
-        // helper if using file resource. not needed if us string only.
-        // can make  as extensions as well
+        // helper if using file resource. not needed if use string only.
+        // can make as extensions as well
         public byte[] CleanByteOrderMark(byte[] bytes)
         {
             var bom = new byte[] { 0xEF, 0xBB, 0xBF };
