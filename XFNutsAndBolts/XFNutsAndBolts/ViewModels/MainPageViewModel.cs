@@ -9,21 +9,28 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace XFNutsAndBolts.ViewModels
 {
     public class MainPageViewModel : ViewModelBase
     {
         private readonly IAppSettingsTest _settings;
+        private ObservableCollection<string> _theProcess;
         private string _name;
         private string _nameInJapanese;
         private string _appVersion;
+        private bool _isReady;
+
+        private delegate void InitViewModel();
 
         public MainPageViewModel(IAppSettingsTest settings)
         {
             _settings = settings;
 
-            StartBackgroundWork();
+            _theProcess = new ObservableCollection<string>();
+            new InitViewModel(StartBackgroundWork).Invoke();
         }
 
         public string Name
@@ -57,21 +64,45 @@ namespace XFNutsAndBolts.ViewModels
 
         }
 
+        public bool IsReady
+        {
+            get { return _isReady; }
+            set
+            {
+                RaisePropertyChanged(ref _isReady, value);
+            }
+        }
+
+        public ICommand RunCommand => new Command(() =>
+        {
+            new InitViewModel(StartBackgroundWork).Invoke();
+        });
+
+        public ObservableCollection<string> TheProcess
+        {
+            get
+            {
+                return _theProcess;
+            }
+        }
+
         public void StartBackgroundWork()
         {
-            Debug.WriteLine("Shows use of Start to start on a background thread:");
-
             var o = Observable.Start(async () =>
             {
+                _theProcess.Clear();
+                _theProcess.Add("Shows use of Start to start on a background thread");
+
+                IsReady = false;
                 Name = string.Empty;
                 NameInJapanese = string.Empty;
                 AppVersion = string.Empty;
 
                 await ParallelExecutionExample();
 
-            }).Finally(() => Debug.WriteLine("Main thread completed.")); // once API call finish, render here
+            }).Finally(() => _theProcess.Add("Main thread completed"));
 
-            Debug.WriteLine("\r\n\t In Main Thread... I still Runs...\r\n");   // This will be executed no matter what
+            _theProcess.Add("In Main Thread... I still Runs..."); // This will be executed no matter what
             o.Wait();   // Wait for completion of background operation.
         }
 
@@ -80,36 +111,38 @@ namespace XFNutsAndBolts.ViewModels
             var o = Observable.CombineLatest(
                 Observable.Start(() =>
                 {
-                    Debug.WriteLine("Executing 1st on Thread: {0}", Thread.CurrentThread.ManagedThreadId);
+                    _theProcess.Add($"Executing 1st on Thread: {Thread.CurrentThread.ManagedThreadId}");
                     Thread.Sleep(4000);   // example of looooooong API call
                     Name = _settings.Name1;
-                    Debug.WriteLine("Executing 1st Thread done");
+                    _theProcess.Add("Executing 1st Thread done");
                     return "Result A";
                 }),
 
                 Observable.Start(() =>
                 {
-                    Debug.WriteLine("Executing 2nd on Thread: {0}", Thread.CurrentThread.ManagedThreadId);
+                    _theProcess.Add($"Executing 2nd on Thread: {Thread.CurrentThread.ManagedThreadId}");
                     Thread.Sleep(6000);   // example of looooooong API call
                     NameInJapanese = _settings.Name2;
-                    Debug.WriteLine("Executing 2nd Thread done");
-
+                    _theProcess.Add("Executing 2nd Thread done");
                     return "Result B";
                 }),
 
                 Observable.Start(() =>
                 {
-                    Debug.WriteLine("Executing 3rd on Thread: {0}", Thread.CurrentThread.ManagedThreadId);
+                    _theProcess.Add($"Executing 3rd on Thread: {Thread.CurrentThread.ManagedThreadId}");
                     Thread.Sleep(3000);   // example of looooooong API call
                     AppVersion = _settings.AppSettings.AppVersion.ToString();
-                    Debug.WriteLine("Executing 3rd Thread done");
+                    _theProcess.Add("Executing 3rd Thread done");
                     return "Result C";
                 })
 
-            ).Finally(() => Debug.WriteLine("Done!"));
+            ).Finally(() =>
+            {
+                _theProcess.Add("Executing All Threads Done");
+                IsReady = true;
+            });
 
-            foreach (string r in await o.FirstAsync())
-                Debug.WriteLine(r);
+            foreach (string r in await o.FirstAsync()) _theProcess.Add(r);
         }
     }
 }

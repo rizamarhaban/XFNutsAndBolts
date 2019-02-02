@@ -1,21 +1,44 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:XFNutsAndBolts"
-             xmlns:vm="clr-namespace:XFNutsAndBolts.ViewModels"
-             BindingContext="{Binding Main, Source={StaticResource Locator}}"
-             x:Class="XFNutsAndBolts.MainPage">
+<ContentPage
+    x:Class="XFNutsAndBolts.MainPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    BindingContext="{Binding Main, Source={StaticResource Locator}}">
 
-    <StackLayout VerticalOptions="CenterAndExpand">
-        <!-- Place new controls here -->
-        <Label Text="Welcome to Xamarin.Forms!" HorizontalOptions="Center" />
-        <Label Text="{Binding Name}" HorizontalOptions="Center" />
-        <Label Text="{Binding NameInJapanese}" HorizontalOptions="Center" />
-        <Label Text="{Binding AppVersion}" HorizontalOptions="Center" />
+    <StackLayout>
+        <!--  Place new controls here  -->
+        <Label HorizontalOptions="Center" Text="Welcome to Xamarin.Forms!" />
+        <Label HorizontalOptions="Center" Text="{Binding Name}" />
+        <Label HorizontalOptions="Center" Text="{Binding NameInJapanese}" />
+        <Label HorizontalOptions="Center" Text="{Binding AppVersion}" />
 
-        <StackLayout Margin="10">
-            <Label x:Name="lblScanning" HorizontalOptions="Center" HorizontalTextAlignment="Center" TextColor="Red"
-                   Text="You able to do anything on the UI while the Text above is loading. No lagging animation." />
+        <StackLayout>
+            <Label
+                x:Name="lblScanning"
+                Margin="10"
+                FontSize="Small"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                Text="You able to do anything on the UI while the Text above is loading. No lagging animation."
+                TextColor="Red" />
+            <ListView HasUnevenRows="True" ItemsSource="{Binding TheProcess}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Label
+                                Margin="0"
+                                FontSize="8"
+                                Text="{Binding .}" />
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+            <Button
+                Command="{Binding RunCommand}"
+                IsEnabled="{Binding IsReady}"
+                Text="Execute Again"
+                VerticalOptions="End" />
         </StackLayout>
     </StackLayout>
 
