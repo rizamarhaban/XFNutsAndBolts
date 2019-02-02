@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using XFNutsAndBolts.ViewModels;
 
 namespace XFNutsAndBolts
 {
@@ -12,6 +13,8 @@ namespace XFNutsAndBolts
     {
         private readonly Animation _labelFadingAnimation;
         private const string AnimHandle = "Spinner";
+
+        private MainPageViewModel vm = null;
 
         public MainPage()
         {
@@ -22,16 +25,21 @@ namespace XFNutsAndBolts
                 lblScanning.TextColor = Color.FromHsla(x, 1, 0.5);
                 lblScanning.Opacity = x;
             }, 0, 1);
+
+            vm = BindingContext as MainPageViewModel;
+
         }
 
         protected override void OnAppearing()
         {
+            MessagingCenter.Subscribe<MainPageViewModel>(vm, "Start", a => AnimationLoop());
             base.OnAppearing();
             AnimationLoop();
         }
 
         private void AnimationLoop()
         {
+            lblScanning.TextColor = Color.Red;
             var sw = new Stopwatch();
             sw.Start();
 
@@ -53,6 +61,7 @@ namespace XFNutsAndBolts
 
         protected override void OnDisappearing()
         {
+            MessagingCenter.Unsubscribe<MainPageViewModel>(vm, "Start");
             base.OnDisappearing();
             this.AbortAnimation(AnimHandle);
         }

@@ -88,26 +88,25 @@ namespace XFNutsAndBolts.ViewModels
 
         public void StartBackgroundWork()
         {
-            var o = Observable.Start(async () =>
-            {
-                _theProcess.Clear();
-                _theProcess.Add("Shows use of Start to start on a background thread");
+            _theProcess.Clear();
+            _theProcess.Add("Shows use of Start to start on a background thread");
 
-                IsReady = false;
-                Name = string.Empty;
-                NameInJapanese = string.Empty;
-                AppVersion = string.Empty;
+            IsReady = false;
+            Name = string.Empty;
+            NameInJapanese = string.Empty;
+            AppVersion = string.Empty;
 
-                await ParallelExecutionExample();
-
-            }).Finally(() => _theProcess.Add("Main thread completed"));
+            Observable.Start(async () => await ParallelExecutionExample())
+                .Finally(() => _theProcess.Add("Main thread completed"));
 
             _theProcess.Add("In Main Thread... I still Runs..."); // This will be executed no matter what
-            o.Wait();   // Wait for completion of background operation.
+
         }
 
         public async Task ParallelExecutionExample()
         {
+            MessagingCenter.Send<MainPageViewModel>(this, "Start");
+
             var o = Observable.CombineLatest(
                 Observable.Start(() =>
                 {
@@ -143,6 +142,7 @@ namespace XFNutsAndBolts.ViewModels
             });
 
             foreach (string r in await o.FirstAsync()) _theProcess.Add(r);
+
         }
     }
 }

@@ -3,7 +3,35 @@
     x:Class="XFNutsAndBolts.MainPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:XFNutsAndBolts.Models"
     BindingContext="{Binding Main, Source={StaticResource Locator}}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Key="normalTemplate">
+                <ViewCell>
+                    <Label
+                        Margin="0"
+                        FontSize="8"
+                        Text="{Binding .}" />
+                </ViewCell>
+            </DataTemplate>
+            <DataTemplate x:Key="redTemplate">
+                <ViewCell>
+                    <Label
+                        Margin="0"
+                        FontAttributes="Bold"
+                        FontSize="8"
+                        Text="{Binding .}"
+                        TextColor="Red" />
+                </ViewCell>
+            </DataTemplate>
+            <local:ItemSelector
+                x:Key="itemSelector"
+                NormalTemplate="{StaticResource normalTemplate}"
+                RedTemplate="{StaticResource redTemplate}" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <StackLayout>
         <!--  Place new controls here  -->
@@ -21,19 +49,10 @@
                 HorizontalTextAlignment="Center"
                 Text="You able to do anything on the UI while the Text above is loading. No lagging animation."
                 TextColor="Red" />
-            <ListView HasUnevenRows="True" ItemsSource="{Binding TheProcess}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <Label
-                                Margin="0"
-                                FontSize="8"
-                                Text="{Binding .}" />
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-
-            </ListView>
+            <ListView
+                HasUnevenRows="True"
+                ItemTemplate="{StaticResource itemSelector}"
+                ItemsSource="{Binding TheProcess}" />
             <Button
                 Command="{Binding RunCommand}"
                 IsEnabled="{Binding IsReady}"
