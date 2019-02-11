@@ -10,16 +10,12 @@
         <ResourceDictionary>
             <DataTemplate x:Key="normalTemplate">
                 <ViewCell>
-                    <Label
-                        Margin="0"
-                        FontSize="8"
-                        Text="{Binding .}" />
+                    <Label FontSize="8" Text="{Binding .}" />
                 </ViewCell>
             </DataTemplate>
             <DataTemplate x:Key="redTemplate">
                 <ViewCell>
                     <Label
-                        Margin="0"
                         FontAttributes="Bold"
                         FontSize="8"
                         Text="{Binding .}"
@@ -33,14 +29,17 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <StackLayout>
-        <!--  Place new controls here  -->
-        <Label HorizontalOptions="Center" Text="Welcome to Xamarin.Forms!" />
-        <Label HorizontalOptions="Center" Text="{Binding Name}" />
-        <Label HorizontalOptions="Center" Text="{Binding NameInJapanese}" />
-        <Label HorizontalOptions="Center" Text="{Binding AppVersion}" />
-
-        <StackLayout>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackLayout Grid.Row="0" Padding="0,20,0,0">
+            <Label HorizontalOptions="Center" Text="Welcome to Xamarin.Forms!" />
+            <Label HorizontalOptions="Center" Text="{Binding Name}" />
+            <Label HorizontalOptions="Center" Text="{Binding NameInJapanese}" />
+            <Label HorizontalOptions="Center" Text="{Binding AppVersion}" />
             <Label
                 x:Name="lblScanning"
                 Margin="10"
@@ -49,16 +48,21 @@
                 HorizontalTextAlignment="Center"
                 Text="You able to do anything on the UI while the Text above is loading. No lagging animation."
                 TextColor="Red" />
-            <ListView
-                HasUnevenRows="True"
-                ItemTemplate="{StaticResource itemSelector}"
-                ItemsSource="{Binding TheProcess}" />
-            <Button
-                Command="{Binding RunCommand}"
-                IsEnabled="{Binding IsReady}"
-                Text="Execute Again"
-                VerticalOptions="End" />
         </StackLayout>
-    </StackLayout>
+        <ListView
+            Grid.Row="1"
+            Margin="10"
+            HasUnevenRows="True"
+            ItemTemplate="{StaticResource itemSelector}"
+            ItemsSource="{Binding TheProcess}" />
+        <Button
+            Grid.Row="2"
+            Margin="10"
+            Command="{Binding RunCommand}"
+            IsEnabled="{Binding IsReady}"
+            Text="Execute Again"
+            VerticalOptions="End" />
+    </Grid>
+
 
 </ContentPage>
