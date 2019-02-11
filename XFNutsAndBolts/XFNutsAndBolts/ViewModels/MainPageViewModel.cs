@@ -1,16 +1,10 @@
-﻿using System;
-using global::Autofac;
-using System.Collections.Generic;
-using System.Text;
-using XFNutsAndBolts.Settings;
+﻿using System.Collections.ObjectModel;
 using System.Reactive.Linq;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Xamarin.Forms;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
+using Xamarin.Forms;
+using XFNutsAndBolts.Settings;
 
 namespace XFNutsAndBolts.ViewModels
 {
@@ -28,8 +22,6 @@ namespace XFNutsAndBolts.ViewModels
         public MainPageViewModel(IAppSettingsTest settings)
         {
             _settings = settings;
-
-            _theProcess = new ObservableCollection<string>();
             new InitViewModel(StartBackgroundWork).Invoke();
         }
 
@@ -73,31 +65,35 @@ namespace XFNutsAndBolts.ViewModels
             }
         }
 
-        public ICommand RunCommand => new Command(() =>
-        {
-            new InitViewModel(StartBackgroundWork).Invoke();
-        });
+        public ICommand RunCommand => new Command(() => new InitViewModel(StartBackgroundWork).Invoke());
 
         public ObservableCollection<string> TheProcess
         {
-            get
+            get { return _theProcess; }
+            set
             {
-                return _theProcess;
+                RaisePropertyChanged(ref _theProcess, value);
             }
         }
 
         public void StartBackgroundWork()
         {
-            _theProcess.Clear();
-            _theProcess.Add("Shows use of Start to start on a background thread");
+            if (_theProcess != null)
+                TheProcess = null;
 
-            IsReady = false;
-            Name = string.Empty;
-            NameInJapanese = string.Empty;
-            AppVersion = string.Empty;
+            TheProcess = new ObservableCollection<string>();
 
-            Observable.Start(async () => await ParallelExecutionExample())
-                .Finally(() => _theProcess.Add("Main thread completed"));
+            Observable.Start(async () =>
+            {
+                _theProcess.Add("Shows use of Start to start on a background thread");
+
+                IsReady = false;
+                Name = string.Empty;
+                NameInJapanese = string.Empty;
+                AppVersion = string.Empty;
+                await ParallelExecutionExample();
+            })
+            .Finally(() => _theProcess.Add("Main thread completed"));
 
             _theProcess.Add("In Main Thread... I still Runs..."); // This will be executed no matter what
 
@@ -105,7 +101,7 @@ namespace XFNutsAndBolts.ViewModels
 
         public async Task ParallelExecutionExample()
         {
-            MessagingCenter.Send<MainPageViewModel>(this, "Start");
+            MessagingCenter.Send(this, "Start");
 
             var o = Observable.CombineLatest(
                 Observable.Start(() =>

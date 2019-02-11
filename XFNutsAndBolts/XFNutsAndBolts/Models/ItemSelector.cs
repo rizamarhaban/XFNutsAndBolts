@@ -9,6 +9,7 @@ namespace XFNutsAndBolts.Models
 
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
+            if (item is null) return NormalTemplate;
             return ((string)item).StartsWith("In Main Thread...") ? RedTemplate : NormalTemplate;
         }
     }
